@@ -18,7 +18,7 @@
 #define STREAM_BATCH_SIZE 5000//ceil((double)target_seqs.size() / (double)(2 * 2))
 
 
-#define DEBUG
+// #define DEBUG
 
 #define MAX(a,b) (a>b ? a : b)
 
@@ -28,7 +28,7 @@
 int main(int argc, char **argv) {
 
 	//gasal_set_device(GPU_SELECT);
-
+	float total_time_sum = 0;
 	Parameters *args;
 	args = new Parameters(argc, argv);
 	args->parse();
@@ -198,7 +198,7 @@ int main(int argc, char **argv) {
 	std::cerr << "Processing..." << std::endl;
 
 	Timer total_time;
-	total_time.Start();
+	// total_time.Start();
 	omp_set_num_threads(n_threads);
 	gasal_gpu_storage_v *gpu_storage_vecs =  (gasal_gpu_storage_v*)calloc(n_threads, sizeof(gasal_gpu_storage_v));
 	for (int z = 0; z < n_threads; z++) {
@@ -332,9 +332,14 @@ int main(int argc, char **argv) {
 
 				//----------------------------------------------------------------------------------------------------
 				//-----------------calling the GASAL2 non-blocking alignment function---------------------------------
+	total_time.Start();
 
-				gasal_aln_async(gpu_batch_arr[gpu_batch_arr_idx].gpu_storage, query_batch_bytes, target_batch_bytes, gpu_batch_arr[gpu_batch_arr_idx].n_seqs_batch, args);
+				int k=0;
+				for (k=0; k<1; k++)
+					gasal_aln_async(gpu_batch_arr[gpu_batch_arr_idx].gpu_storage, query_batch_bytes, target_batch_bytes, gpu_batch_arr[gpu_batch_arr_idx].n_seqs_batch, args);
 				gpu_batch_arr[gpu_batch_arr_idx].gpu_storage->current_n_alns = 0;
+	total_time.Stop();
+	total_time_sum += total_time.GetTime();
 				//---------------------------------------------------------------------------------
 			}
 
@@ -443,7 +448,7 @@ int main(int argc, char **argv) {
 		gasal_destroy_gpu_storage_v(&(gpu_storage_vecs[z]));
 	}
 	free(gpu_storage_vecs);
-	total_time.Stop();
+	// total_time.Stop();
 	/*
 	string algorithm = al_type;
 	string start_type[2] = {"without_start", "with_start"};
@@ -455,7 +460,7 @@ int main(int argc, char **argv) {
 		av_misc_time += (thread_misc_time[i]/n_threads);
 	}
 	std::cerr << std::endl << "Done" << std::endl;
-	fprintf(stderr, "Total execution time (in milliseconds): %.3f\n", total_time.GetTime());
+	fprintf(stderr, "Total execution time (in milliseconds): %.3f\n", total_time_sum);
 	delete args; // closes the files
 	//free(args); // closes the files
 }
