@@ -46,9 +46,9 @@ inputs = [tuple(lines[i:i+3]) for i in range(0, len(lines), 3)]
 scores, refs, seqs = list(map(list, zip(*inputs)))
 
 # create output files
-ref_fn = 'input/bsw_refs.fasta'
-seq_fn = 'input/bsw_seqs.fasta'
-log_fn = 'input/bsw_log.txt'
+ref_fn = 'bsw_refs.fasta'
+seq_fn = 'bsw_seqs.fasta'
+log_fn = 'bsw_log.txt'
 if os.path.isfile(ref_fn): os.remove(ref_fn)
 if os.path.isfile(seq_fn): os.remove(seq_fn)
 if os.path.isfile(log_fn): os.remove(log_fn)
