@@ -1,4 +1,4 @@
-CUDA_LD_LIBRARY=/usr/local/cuda-10.1/targets/x86_64-linux/lib
+CUDA_LD_LIBRARY=/usr/local/cuda/targets/x86_64-linux/lib
 ANALYSIS_FILENAME=analysis
 # prefix1 can be optirun in case you need to run it from an optimus-enabled laptop.
 PREFIX1=
@@ -22,7 +22,7 @@ FILES_262K=reads_150.fasta ref_150.fasta
 FILES_SHORT=short_query_batch.fasta short_target_batch.fasta
 
 .cpp.o:
-	g++ -std=c++11 -g -c -O3 -Wall -Werror -fopenmp -I ../include  -o test_prog.o test_prog.cpp
+	g++ -std=c++11 -g -c -O3 -Wall -Werror -fopenmp -I ../src  -o test_prog.o test_prog.cpp
 
 all: clean test_prog.out
 
